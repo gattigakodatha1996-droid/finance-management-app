@@ -1,7 +1,3 @@
-https://ibb.co/B5QW7pc8 loki
-https://ibb.co/9Ds24pn vasu
-
-
 import { useState } from 'react';
 import { useTransactions } from '../../hooks/useTransactions';
 import { getCategoryIcon, getCategoryColor } from '../utils/categoryHelpers';
