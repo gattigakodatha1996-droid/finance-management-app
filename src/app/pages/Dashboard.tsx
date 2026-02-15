@@ -48,7 +48,7 @@ export function Dashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center pt-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Money Manager</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Finome</h1>
         <p className="text-gray-600">Track your family expenses</p>
       </div>
       
@@ -58,7 +58,7 @@ export function Dashboard() {
           <div className="flex justify-between items-center mb-6">
             <div>
               <p className="text-sm opacity-90 mb-1">Total Expenses</p>
-              <p className="text-3xl font-bold">${totalExpenses.toFixed(2)}</p>
+              <p className="text-3xl font-bold">₹{totalExpenses.toFixed(2)}</p>
             </div>
             <div className="text-right">
               <p className="text-sm opacity-90">This Month</p>
@@ -92,7 +92,7 @@ export function Dashboard() {
                         <span className="font-medium text-gray-900">{item.category}</span>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-gray-900">${item.amount.toFixed(2)}</div>
+                        <div className="font-semibold text-gray-900">₹{item.amount.toFixed(2)}</div>
                         <div className="text-sm text-gray-500">{percentage.toFixed(1)}%</div>
                       </div>
                     </div>
@@ -120,13 +120,13 @@ export function Dashboard() {
         <div className="bg-white rounded-xl shadow-md p-4">
           <p className="text-sm text-gray-600 mb-1">Your Expenses</p>
           <p className="text-2xl font-bold text-gray-900">
-            ${yourExpenses.toFixed(2)}
+            ₹{yourExpenses.toFixed(2)}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-md p-4">
           <p className="text-sm text-gray-600 mb-1">Wife's Expenses</p>
           <p className="text-2xl font-bold text-gray-900">
-            ${wifeExpenses.toFixed(2)}
+            ₹{wifeExpenses.toFixed(2)}
           </p>
         </div>
       </div>

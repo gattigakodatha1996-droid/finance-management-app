@@ -1,9 +1,48 @@
-import { getTotalExpenses, getTransactionsByCategory } from '../utils/mockData';
+import { useTransactions } from '../../hooks/useTransactions';
 import { getCategoryIcon, getCategoryColor } from '../utils/categoryHelpers';
 
 export function Dashboard() {
+  // Get data from Firebase instead of mock data
+  const { 
+    transactions, 
+    loading, 
+    error,
+    getTotalExpenses,
+    getTransactionsByCategory 
+  } = useTransactions();
+  
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading your data...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show error state
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 m-4">
+        <p className="text-red-800">Error loading data: {error}</p>
+      </div>
+    );
+  }
+  
   const totalExpenses = getTotalExpenses();
   const categoryData = getTransactionsByCategory().slice(0, 5);
+  
+  // Calculate user-specific totals
+  const yourExpenses = transactions
+    .filter(t => t.user === 'You')
+    .reduce((sum, t) => sum + t.amount, 0);
+    
+  const wifeExpenses = transactions
+    .filter(t => t.user === 'Wife')
+    .reduce((sum, t) => sum + t.amount, 0);
   
   return (
     <div className="space-y-6">
@@ -31,44 +70,48 @@ export function Dashboard() {
         {/* Category Breakdown */}
         <div className="p-6">
           <h3 className="font-semibold text-gray-900 mb-4">Top Categories</h3>
-          <div className="space-y-3">
-            {categoryData.map((item) => {
-              const Icon = getCategoryIcon(item.category);
-              const color = getCategoryColor(item.category);
-              const percentage = (item.amount / totalExpenses) * 100;
-              
-              return (
-                <div key={item.category} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div 
-                        className="w-10 h-10 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: color + '40' }}
-                      >
-                        <Icon className="w-5 h-5" style={{ color }} />
+          {categoryData.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No transactions yet. Add your first transaction!</p>
+          ) : (
+            <div className="space-y-3">
+              {categoryData.map((item) => {
+                const Icon = getCategoryIcon(item.category);
+                const color = getCategoryColor(item.category);
+                const percentage = (item.amount / totalExpenses) * 100;
+                
+                return (
+                  <div key={item.category} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-10 h-10 rounded-full flex items-center justify-center"
+                          style={{ backgroundColor: color + '40' }}
+                        >
+                          <Icon className="w-5 h-5" style={{ color }} />
+                        </div>
+                        <span className="font-medium text-gray-900">{item.category}</span>
                       </div>
-                      <span className="font-medium text-gray-900">{item.category}</span>
+                      <div className="text-right">
+                        <div className="font-semibold text-gray-900">${item.amount.toFixed(2)}</div>
+                        <div className="text-sm text-gray-500">{percentage.toFixed(1)}%</div>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <div className="font-semibold text-gray-900">${item.amount.toFixed(2)}</div>
-                      <div className="text-sm text-gray-500">{percentage.toFixed(1)}%</div>
+                    <div className="ml-13">
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full rounded-full"
+                          style={{ 
+                            width: `${percentage}%`,
+                            backgroundColor: color 
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="ml-13">
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full rounded-full"
-                        style={{ 
-                          width: `${percentage}%`,
-                          backgroundColor: color 
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
       
@@ -77,13 +120,13 @@ export function Dashboard() {
         <div className="bg-white rounded-xl shadow-md p-4">
           <p className="text-sm text-gray-600 mb-1">Your Expenses</p>
           <p className="text-2xl font-bold text-gray-900">
-            ${(totalExpenses * 0.55).toFixed(2)}
+            ${yourExpenses.toFixed(2)}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-md p-4">
           <p className="text-sm text-gray-600 mb-1">Wife's Expenses</p>
           <p className="text-2xl font-bold text-gray-900">
-            ${(totalExpenses * 0.45).toFixed(2)}
+            ${wifeExpenses.toFixed(2)}
           </p>
         </div>
       </div>

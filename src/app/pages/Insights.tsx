@@ -80,7 +80,7 @@ export function Insights() {
           <div className="mt-4">
             <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center">
               <p className="text-white/80 text-sm mb-1">Total Expenses</p>
-              <p className="text-white font-bold text-2xl">$ {totalExpenses.toFixed(2)}</p>
+              <p className="text-white font-bold text-2xl">₹ {totalExpenses.toFixed(2)}</p>
             </div>
           </div>
         </div>
@@ -113,7 +113,7 @@ export function Insights() {
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-gray-900">${totalExpenses.toFixed(0)}</p>
+                    <p className="text-2xl font-bold text-gray-900">₹{totalExpenses.toFixed(0)}</p>
                     <p className="text-sm text-gray-500">Total</p>
                   </div>
                 </div>
@@ -167,7 +167,7 @@ export function Insights() {
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
                           <span className="font-medium text-gray-900">{item.category}</span>
-                          <span className="font-semibold text-gray-900">${item.amount.toFixed(2)}</span>
+                          <span className="font-semibold text-gray-900">₹{item.amount.toFixed(2)}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">

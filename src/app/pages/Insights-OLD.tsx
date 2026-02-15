@@ -1,9 +1,39 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
-import { getTotalExpenses, getTransactionsByCategory } from '../utils/mockData';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { useTransactions } from '../../hooks/useTransactions';
 import { getCategoryIcon, getCategoryColor } from '../utils/categoryHelpers';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export function Insights() {
+  // Get data from Firebase
+  const { 
+    transactions,
+    loading, 
+    error,
+    getTotalExpenses,
+    getTransactionsByCategory 
+  } = useTransactions();
+  
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading insights...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show error state
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 m-4">
+        <p className="text-red-800">Error loading insights: {error}</p>
+      </div>
+    );
+  }
+  
   const categoryData = getTransactionsByCategory();
   const totalExpenses = getTotalExpenses();
   
@@ -57,100 +87,110 @@ export function Insights() {
         
         {/* Pie Chart */}
         <div className="p-6">
-          <div className="relative" style={{ height: '300px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={getCategoryColor(entry.name)} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-gray-900">${totalExpenses.toFixed(0)}</p>
-                <p className="text-sm text-gray-500">Total</p>
-              </div>
+          {chartData.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No data to display. Add transactions to see insights!</p>
             </div>
-          </div>
-          
-          {/* Category Legend */}
-          <div className="mt-6 space-y-2">
-            {chartData.slice(0, 5).map((item) => {
-              const Icon = getCategoryIcon(item.name);
-              const color = getCategoryColor(item.name);
-              
-              return (
-                <div key={item.name} className="flex items-center justify-between py-2">
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: color }}
-                    />
-                    <span className="text-gray-900 font-medium">{item.name}</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="font-semibold text-gray-900">{item.percentage}%</span>
+          ) : (
+            <>
+              <div className="relative" style={{ height: '300px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={2}
+                      dataKey="value"
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={getCategoryColor(entry.name)} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-gray-900">${totalExpenses.toFixed(0)}</p>
+                    <p className="text-sm text-gray-500">Total</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+              
+              {/* Category Legend */}
+              <div className="mt-6 space-y-2">
+                {chartData.slice(0, 5).map((item) => {
+                  const Icon = getCategoryIcon(item.name);
+                  const color = getCategoryColor(item.name);
+                  
+                  return (
+                    <div key={item.name} className="flex items-center justify-between py-2">
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="text-gray-900 font-medium">{item.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-semibold text-gray-900">{item.percentage}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
         
         {/* Top Lists Section */}
-        <div className="border-t border-gray-200 p-6">
-          <h3 className="font-bold text-gray-900 mb-4">Top lists</h3>
-          <div className="space-y-3">
-            {categoryData.slice(0, 5).map((item) => {
-              const Icon = getCategoryIcon(item.category);
-              const color = getCategoryColor(item.category);
-              const percentage = (item.amount / totalExpenses) * 100;
-              
-              return (
-                <div key={item.category} className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="w-10 h-10 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: color + '40' }}
-                    >
-                      <Icon className="w-5 h-5" style={{ color }} />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium text-gray-900">{item.category}</span>
-                        <span className="font-semibold text-gray-900">${item.amount.toFixed(2)}</span>
+        {categoryData.length > 0 && (
+          <div className="border-t border-gray-200 p-6">
+            <h3 className="font-bold text-gray-900 mb-4">Top lists</h3>
+            <div className="space-y-3">
+              {categoryData.slice(0, 5).map((item) => {
+                const Icon = getCategoryIcon(item.category);
+                const color = getCategoryColor(item.category);
+                const percentage = (item.amount / totalExpenses) * 100;
+                
+                return (
+                  <div key={item.category} className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-10 h-10 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: color + '40' }}
+                      >
+                        <Icon className="w-5 h-5" style={{ color }} />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full rounded-full transition-all"
-                            style={{ 
-                              width: `${percentage}%`,
-                              backgroundColor: color 
-                            }}
-                          />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="font-medium text-gray-900">{item.category}</span>
+                          <span className="font-semibold text-gray-900">${item.amount.toFixed(2)}</span>
                         </div>
-                        <span className="text-sm text-gray-500 min-w-[45px] text-right">
-                          {percentage.toFixed(1)}%
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full rounded-full transition-all"
+                              style={{ 
+                                width: `${percentage}%`,
+                                backgroundColor: color 
+                              }}
+                            />
+                          </div>
+                          <span className="text-sm text-gray-500 min-w-[45px] text-right">
+                            {percentage.toFixed(1)}%
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -1,12 +1,38 @@
 import { useState } from 'react';
-import { mockTransactions } from '../utils/mockData';
+import { useTransactions } from '../../hooks/useTransactions';
 import { TransactionItem } from '../components/TransactionItem';
 import { ChevronDown } from 'lucide-react';
 
 export function Transactions() {
   const [filter, setFilter] = useState<'all' | 'You' | 'Wife'>('all');
-  const [sortedTransactions] = useState(
-    [...mockTransactions].sort((a, b) => b.date.getTime() - a.date.getTime())
+  
+  // Get data from Firebase
+  const { transactions, loading, error } = useTransactions();
+  
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading transactions...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show error state
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 m-4">
+        <p className="text-red-800">Error loading transactions: {error}</p>
+      </div>
+    );
+  }
+  
+  // Sort transactions by date
+  const sortedTransactions = [...transactions].sort(
+    (a, b) => b.date.getTime() - a.date.getTime()
   );
   
   const filteredTransactions = filter === 'all' 
@@ -25,7 +51,7 @@ export function Transactions() {
     }
     groups[date].push(transaction);
     return groups;
-  }, {} as Record<string, typeof mockTransactions>);
+  }, {} as Record<string, typeof transactions>);
   
   const totalExpenses = filteredTransactions.reduce((sum, t) => sum + t.amount, 0);
   
@@ -82,18 +108,24 @@ export function Transactions() {
       
       {/* Transaction List */}
       <div className="space-y-4">
-        {Object.entries(groupedByDate).map(([date, transactions]) => (
-          <div key={date} className="bg-white rounded-2xl shadow-md overflow-hidden">
-            <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
-              <p className="font-semibold text-gray-700">{date}</p>
-            </div>
-            <div className="divide-y divide-gray-100">
-              {transactions.map((transaction) => (
-                <TransactionItem key={transaction.id} transaction={transaction} />
-              ))}
-            </div>
+        {Object.keys(groupedByDate).length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-md p-8 text-center">
+            <p className="text-gray-500">No transactions found. Add your first transaction!</p>
           </div>
-        ))}
+        ) : (
+          Object.entries(groupedByDate).map(([date, transactions]) => (
+            <div key={date} className="bg-white rounded-2xl shadow-md overflow-hidden">
+              <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+                <p className="font-semibold text-gray-700">{date}</p>
+              </div>
+              <div className="divide-y divide-gray-100">
+                {transactions.map((transaction) => (
+                  <TransactionItem key={transaction.id} transaction={transaction} />
+                ))}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
