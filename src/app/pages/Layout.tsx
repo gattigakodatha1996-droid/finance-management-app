@@ -11,186 +11,303 @@ export function Layout({ children, onAddTransaction }: LayoutProps) {
   const location = useLocation();
   
   const navItems = [
-    { path: '/', icon: Home, label: 'Home' },
-    { path: '/transactions', icon: List, label: 'Transactions' },
-    { path: '/insights', icon: PieChart, label: 'Insights' }
+    { path: '/', icon: Home, label: 'Home', emoji: '🏠' },
+    { path: '/transactions', icon: List, label: 'Transactions', emoji: '💰' },
+    { path: '/insights', icon: PieChart, label: 'Insights', emoji: '📊' }
   ];
   
   return (
     <>
-      <div className="min-h-screen pb-20" style={{ background: 'transparent' }}>
-        <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="romantic-layout">
+        <div className="content-container">
           {children}
         </div>
         
-        {/* Floating Add Button with Sexy Animation */}
+        {/* Floating Add Button */}
         <button
           onClick={onAddTransaction}
-          className="fab-button"
+          className="romantic-fab"
           aria-label="Add transaction"
         >
-          <Plus className="w-6 h-6 text-white fab-icon" />
-          <div className="fab-ripple"></div>
+          <div className="fab-hearts">
+            <span className="fab-heart">💕</span>
+          </div>
+          <Plus className="fab-icon" />
+          <div className="fab-ripple-1"></div>
+          <div className="fab-ripple-2"></div>
         </button>
         
         {/* Bottom Navigation */}
-        <nav className="bottom-nav">
-          <div className="max-w-2xl mx-auto px-4">
-            <div className="flex items-center justify-around h-16">
-              {navItems.map((item, index) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`nav-item ${isActive ? 'active' : ''}`}
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
+        <nav className="romantic-nav">
+          <div className="nav-glow"></div>
+          <div className="nav-content">
+            {navItems.map((item, index) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`romantic-nav-item ${isActive ? 'active' : ''}`}
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="nav-icon-wrapper">
+                    {isActive && <div className="active-glow"></div>}
                     <Icon className="nav-icon" />
-                    <span className="nav-label">{item.label}</span>
-                    {isActive && <div className="active-indicator"></div>}
-                  </Link>
-                );
-              })}
-            </div>
+                    <span className="nav-emoji">{item.emoji}</span>
+                  </div>
+                  <span className="nav-label">{item.label}</span>
+                  {isActive && (
+                    <>
+                      <div className="active-indicator"></div>
+                      <div className="active-shine"></div>
+                    </>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </nav>
       </div>
       
       <style>{`
+        .romantic-layout {
+          min-height: 100vh;
+          padding-bottom: 100px;
+          position: relative;
+        }
+        
+        .content-container {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+        
         /* Floating Action Button */
-        .fab-button {
+        .romantic-fab {
           position: fixed;
-          bottom: 90px;
+          bottom: 100px;
           right: 24px;
-          width: 64px;
-          height: 64px;
-          background: linear-gradient(135deg, #EAB308 0%, #FBBF24 100%);
-          border-radius: 50%;
+          width: 72px;
+          height: 72px;
+          background: linear-gradient(135deg, #FBBF24 0%, #F472B6 100%);
           border: none;
+          border-radius: 50%;
           box-shadow: 
-            0 8px 24px rgba(234, 179, 8, 0.4),
-            0 0 0 0 rgba(234, 179, 8, 0.4);
+            0 12px 32px rgba(236, 72, 153, 0.4),
+            0 0 0 0 rgba(251, 191, 36, 0.4);
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          z-index: 40;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          animation: fab-enter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+          z-index: 100;
+          transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+          animation: fab-entrance 1s cubic-bezier(0.34, 1.56, 0.64, 1);
           position: relative;
           overflow: visible;
         }
         
-        .fab-button:hover {
-          transform: scale(1.1) rotate(90deg);
+        .romantic-fab:hover {
+          transform: scale(1.15) rotate(90deg);
           box-shadow: 
-            0 12px 32px rgba(234, 179, 8, 0.5),
-            0 0 0 8px rgba(234, 179, 8, 0.1);
+            0 16px 48px rgba(236, 72, 153, 0.5),
+            0 0 40px rgba(251, 191, 36, 0.3);
         }
         
-        .fab-button:active {
+        .romantic-fab:active {
           transform: scale(0.95) rotate(90deg);
         }
         
-        .fab-icon {
-          transition: transform 0.3s ease;
+        .fab-hearts {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          z-index: 10;
         }
         
-        .fab-button:hover .fab-icon {
+        .fab-heart {
+          font-size: 20px;
+          animation: heart-bounce 2s ease-in-out infinite;
+        }
+        
+        .fab-icon {
+          width: 28px;
+          height: 28px;
+          color: white;
+          transition: transform 0.3s ease;
+          position: relative;
+          z-index: 5;
+        }
+        
+        .romantic-fab:hover .fab-icon {
           transform: rotate(90deg);
         }
         
-        .fab-ripple {
+        .fab-ripple-1,
+        .fab-ripple-2 {
           position: absolute;
           width: 100%;
           height: 100%;
           border-radius: 50%;
-          background: rgba(234, 179, 8, 0.3);
-          animation: ripple-pulse 2s ease-out infinite;
+          background: radial-gradient(circle, rgba(251, 191, 36, 0.4), rgba(236, 72, 153, 0.4));
+          animation: ripple-pulse 3s ease-out infinite;
+        }
+        
+        .fab-ripple-2 {
+          animation-delay: 1.5s;
         }
         
         /* Bottom Navigation */
-        .bottom-nav {
+        .romantic-nav {
           position: fixed;
           bottom: 0;
           left: 0;
           right: 0;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(20px);
-          border-top: 1px solid rgba(234, 179, 8, 0.2);
-          box-shadow: 
-            0 -10px 40px rgba(0, 0, 0, 0.1),
-            0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-          animation: nav-enter 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+          z-index: 50;
+          animation: nav-slide-up 1s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        .nav-item {
+        .nav-glow {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to top, rgba(251, 191, 36, 0.1), transparent);
+          pointer-events: none;
+        }
+        
+        .nav-content {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(30px);
+          border-top: 2px solid;
+          border-image: linear-gradient(90deg, 
+            rgba(251, 191, 36, 0.3), 
+            rgba(236, 72, 153, 0.3),
+            rgba(251, 191, 36, 0.3)
+          ) 1;
+          box-shadow: 
+            0 -10px 40px rgba(0, 0, 0, 0.08),
+            0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          padding: 12px 20px 20px;
+          position: relative;
+        }
+        
+        .romantic-nav-item {
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
-          width: 100%;
-          height: 100%;
-          position: relative;
+          gap: 6px;
+          padding: 12px 20px;
           text-decoration: none;
           color: #9CA3AF;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          border-radius: 16px;
           opacity: 0;
-          animation: nav-item-enter 0.4s ease-out forwards;
+          animation: nav-item-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         
-        .nav-item:hover {
-          color: #EAB308;
+        .romantic-nav-item:hover {
+          color: #EC4899;
           transform: translateY(-4px);
+          background: rgba(236, 72, 153, 0.05);
         }
         
-        .nav-item.active {
-          color: #EAB308;
+        .romantic-nav-item.active {
+          color: #EC4899;
+        }
+        
+        .nav-icon-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+        }
+        
+        .active-glow {
+          position: absolute;
+          inset: -8px;
+          background: radial-gradient(circle, rgba(236, 72, 153, 0.3), transparent 70%);
+          border-radius: 50%;
+          animation: glow-pulse 2s ease-in-out infinite;
         }
         
         .nav-icon {
           width: 24px;
           height: 24px;
-          margin-bottom: 4px;
           transition: all 0.3s ease;
+          position: relative;
+          z-index: 2;
         }
         
-        .nav-item:hover .nav-icon {
+        .romantic-nav-item:hover .nav-icon {
           transform: scale(1.2);
         }
         
-        .nav-item.active .nav-icon {
-          animation: bounce-icon 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .romantic-nav-item.active .nav-icon {
+          animation: icon-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .nav-emoji {
+          position: absolute;
+          font-size: 12px;
+          bottom: -2px;
+          right: -2px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        
+        .romantic-nav-item.active .nav-emoji {
+          opacity: 1;
+          animation: emoji-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         .nav-label {
           font-size: 12px;
-          font-weight: 500;
+          font-weight: 600;
           transition: all 0.3s ease;
         }
         
-        .nav-item.active .nav-label {
-          font-weight: 700;
+        .romantic-nav-item.active .nav-label {
+          font-weight: 800;
+          background: linear-gradient(135deg, #F59E0B, #EC4899);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
         
         .active-indicator {
           position: absolute;
-          top: 0;
+          top: -12px;
           left: 50%;
           transform: translateX(-50%);
-          width: 40px;
-          height: 3px;
-          background: linear-gradient(90deg, #EAB308, #FCD34D);
+          width: 50px;
+          height: 4px;
+          background: linear-gradient(90deg, #FBBF24, #EC4899);
           border-radius: 0 0 8px 8px;
-          box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
-          animation: indicator-slide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 12px rgba(236, 72, 153, 0.5);
+          animation: indicator-slide-down 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .active-shine {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, 
+            transparent 0%,
+            rgba(236, 72, 153, 0.1) 50%,
+            transparent 100%);
+          animation: shine-sweep 2s ease-in-out infinite;
+          border-radius: 16px;
         }
         
         /* Animations */
-        @keyframes fab-enter {
+        @keyframes fab-entrance {
           from {
             opacity: 0;
             transform: scale(0) rotate(-180deg);
@@ -201,22 +318,34 @@ export function Layout({ children, onAddTransaction }: LayoutProps) {
           }
         }
         
+        @keyframes heart-bounce {
+          0%, 100% {
+            transform: scale(1) translateY(0);
+          }
+          10%, 30% {
+            transform: scale(1.3) translateY(-4px);
+          }
+          20%, 40% {
+            transform: scale(1) translateY(0);
+          }
+        }
+        
         @keyframes ripple-pulse {
           0% {
             transform: scale(1);
-            opacity: 0.4;
+            opacity: 0.6;
           }
           50% {
-            transform: scale(1.5);
+            transform: scale(1.8);
             opacity: 0.2;
           }
           100% {
-            transform: scale(2);
+            transform: scale(2.5);
             opacity: 0;
           }
         }
         
-        @keyframes nav-enter {
+        @keyframes nav-slide-up {
           from {
             opacity: 0;
             transform: translateY(100%);
@@ -227,34 +356,74 @@ export function Layout({ children, onAddTransaction }: LayoutProps) {
           }
         }
         
-        @keyframes nav-item-enter {
+        @keyframes nav-item-pop {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: scale(0.8) translateY(20px);
           }
           to {
             opacity: 1;
-            transform: translateY(0);
+            transform: scale(1) translateY(0);
           }
         }
         
-        @keyframes bounce-icon {
+        @keyframes glow-pulse {
+          0%, 100% {
+            opacity: 0.6;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.2);
+          }
+        }
+        
+        @keyframes icon-bounce {
           0%, 100% {
             transform: scale(1) translateY(0);
           }
           50% {
-            transform: scale(1.3) translateY(-8px);
+            transform: scale(1.3) translateY(-6px);
           }
         }
         
-        @keyframes indicator-slide {
+        @keyframes emoji-pop {
           from {
-            transform: translateX(-50%) scaleX(0);
+            opacity: 0;
+            transform: scale(0) rotate(-180deg);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+          }
+        }
+        
+        @keyframes indicator-slide-down {
+          from {
+            transform: translateX(-50%) scaleX(0) translateY(-20px);
             opacity: 0;
           }
           to {
-            transform: translateX(-50%) scaleX(1);
+            transform: translateX(-50%) scaleX(1) translateY(0);
             opacity: 1;
+          }
+        }
+        
+        @keyframes shine-sweep {
+          0% {
+            background-position: -100% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
+        }
+        
+        @media (max-width: 640px) {
+          .romantic-fab {
+            bottom: 90px;
+            right: 20px;
+            width: 64px;
+            height: 64px;
           }
         }
       `}</style>
